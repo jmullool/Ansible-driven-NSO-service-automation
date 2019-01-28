@@ -42,18 +42,18 @@ Our solution will levegerage the following Cisco technologies
 
 Ansible is a well known open source tool for server and application autoamtion. Cisco has contributed NSO modules to Ansible such that Ansible playbooks can now be developed to drive NSO device and service configuration. The API used to communicate to NSO is a JSON RPC. Any device or service in NSO can now be accessed via Ansible. In our labs we run through several examples:
 
-..* Using the query, action and show Ansible NSO Modules
-..* Using the Ansible config Module
-..* Comparing Native IOS Ansible modules with NSO Ansible Modules
-..* Ansible + NSO deploying multiple NFVIS/vBranch sites
-..* Ansible + NSO deploying NFVIS/vBaranch with Linux VNF
+* Using the query, action and show Ansible NSO Modules
+* Using the Ansible config Module
+* Comparing Native IOS Ansible modules with NSO Ansible Modules
+* Ansible + NSO deploying multiple NFVIS/vBranch sites
+* Ansible + NSO deploying NFVIS/vBaranch with Linux VNF
 
 The code for this project included:
 
-..* Anible playbook creation
-..* NSO eBGP XPATH service creation
-..* Creating deployment XML files for NSO
-..* Building proper Day0 bootstrap files for both ISRv and Centos VNFs
+* Anible playbook creation
+* NSO eBGP XPATH service creation
+* Creating deployment XML files for NSO
+* Building proper Day0 bootstrap files for both ISRv and Centos VNFs
 
 ![](doc/page2.png)
 
@@ -66,9 +66,6 @@ The below referenced documentation in the docs folder reviews all usage guidelin
 
 [root@ansible NSO-Playbooks]# ansible-playbook query-hostname-xrv.yaml -v
 Using /root/playbooks/NSO-Playbooks/ansible.cfg as config file
- [WARNING]: Unable to parse /root/playbooks/NSO-Playbooks/inventory/inventory as an inventory source
- [WARNING]: No inventory was parsed, only implicit localhost is available
- [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
 
 PLAY [Query hostname on XRv] ************************************************************************************************************************************************************
 
@@ -79,41 +76,16 @@ PLAY RECAP *********************************************************************
 localhost                  : ok=1    changed=0    unreachable=0    failed=0 
 
 
-[root@studentnso NSO-Playbooks]# cat query-hostname-xrv.yaml
----
-
-- name: Query hostname on XRv
-  hosts: localhost
-  connection: local
-  gather_facts: no
-
-  vars_files:
-    - vars.yaml
-
-
-
-  tasks:
-
-  - name: Query hostname
-    nso_query:
-      url: '{{ url }}'
-      username: '{{ username }}'
-      password: '{{ password }}'
-      xpath:  /ncs:devices/device[name='{{ target }}']/config
-      fields:
-      - cisco-ios-xr:hostname
-
-
 ## Installation
 
 The easiest approach is to utilize the pre-canned Cisco dCloud environemnt. This will be generally available mid-February 2019 but can be requested beforethen by sending an email to jmullool@cisco.com. 
 
 Otherwise for manual install, you would need to:
 
-..* Install Ansible- https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
-..* Install Cisco NSO- https://developer.cisco.com/docs/nso/#!getting-nso/getting-nso
-..* Install the Cisco NSO vBranch Function Pack if interested in vBranch use cases
-..* Have IOS, IOS-XR, ENCS devices available to configure
+* Install Ansible- [Link to Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+* Install Cisco NSO- [Link to NSO](https://developer.cisco.com/docs/nso/#!getting-nso/getting-nso)
+* Install the Cisco NSO vBranch Function Pack if interested in vBranch use cases
+* Have IOS, IOS-XR, ENCS devices available to configure
 
 ## Documentation
 
