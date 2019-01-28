@@ -1,0 +1,22 @@
+---
+
+- name: Show module test
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+  - name: Show devices
+    nso_show:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      path: /ncs:devices/device
+      operational: false
+
+

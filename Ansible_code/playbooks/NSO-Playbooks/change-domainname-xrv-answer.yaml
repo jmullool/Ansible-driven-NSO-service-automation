@@ -1,0 +1,28 @@
+---
+
+- name: Change domain name on XRv
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+
+  tasks:
+
+  - name: Change domain on XRv
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        tailf-ncs:devices:
+          device:
+          - name: '{{ target }}'
+            config:
+              tailf-ned-cisco-ios-xr:ip:
+                domain-name: '{{ domain }}'
+
+

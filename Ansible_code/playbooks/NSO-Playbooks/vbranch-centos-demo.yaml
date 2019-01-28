@@ -1,0 +1,191 @@
+---
+
+- name: Deploy ISRv + CentOS service chain on ENCS
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+  - name: Onboard ENCS to NSO
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        branch-infra:branch-infra:
+          branch-cpe:
+          - name: '{{ deployment.serial }}'
+            provider: ProviderA
+            type: ENCS
+            password: '{{ deployment.password }}'
+            serial:  '{{ deployment.serial }}'
+
+
+  - name: Onboard ENCS config to NSO
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        branch-infra:branch-infra:
+          branch-cpe:
+          - name: '{{ deployment.serial }}'
+            provider: ProviderA
+            type: ENCS
+            password: '{{ deployment.password }}'
+            serial: '{{ deployment.serial }}'
+            network:
+            - name: client-net
+              trunk: false
+              bridge: client-bridge
+            vnfd:
+            - name: Centos2
+              vdu:
+              - name: centos
+            - name: vBranch-ISR-1.0
+              vdu:
+              - name: ISR
+            vnf:
+            - name: centos
+              deployment: Centos2
+              vnfd: Centos2
+              vdu: centos
+              network:
+              - name: client-net
+                nicid: '1'
+            - name: isr
+              deployment: ISR
+              vnfd: vBranch-ISR-1.0
+              vdu: ISR
+              network:
+              - name: client-net
+                nicid: '3'
+                pre-allocated:
+                  address: 192.168.200.1
+                  netmask: 255.255.255.0
+              - name: lan-net
+                nicid: '2'
+              - name: wan-net
+                nicid: '1'
+                pre-allocated:
+                  address: '{{ deployment.isrv_ip }}'
+                  netmask: 255.255.255.0
+                  gateway: '{{ deployment.isrv_gateway }}'
+
+
+  - name: Poll CentOS deployment status in NSO
+    nso_verify:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        branch-infra:branch-infra-status:
+          branch-cpe:
+          - name: '{{ deployment.serial }}'
+            plan:
+              component:
+              - name: self
+                type: self
+                state:
+                - name: ready
+                  status: reached
+    register: result
+    until: result is succeeded
+    retries: 30
+    delay: 30
+
+
+  - name: Query IP address
+    nso_query:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      xpath:  /ncs:devices/device[name='{{ deployment.serial }}_ENCS']
+      fields:
+      - address
+    register: ip
+
+
+  - name: Query ssh port forwarding range
+    nso_query:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      xpath:  /ncs:devices/device[name='{{ deployment.serial }}_ENCS']/config/vmlc:vm_lifecycle/tenants/tenant[name='admin']/deployments/deployment[name='{{ deployment.serial }}_centos']/vm_group[name='centos-centos']/interfaces/interface[nicid=0]/port_forwarding/port[type='ssh']/external_port_range
+      fields:
+      - start
+    register: port
+
+
+  - name: Create new CentOS in-memory host
+    add_host:
+      hostname: new_centos
+      ansible_ssh_user: root
+      ansible_ssh_pass: cisco123
+      ansible_ssh_host: '{{ ip.output[0][0] }}'
+      ansible_ssh_port: '{{ port.output[0][0] }}'
+      ansible_ssh_extra_args: "-o StrictHostKeyChecking=no"
+
+
+
+
+
+
+
+- name: Configure CentOS VM
+  hosts: new_centos
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+  - name: Wait for VM to become reachable
+    wait_for_connection:
+      timeout: 300
+
+
+  - name: Initiate DHCP request
+    command: "dhclient eth1"
+
+
+  - name: Update yum.conf with proxy information
+    lineinfile:
+      path: /etc/yum.conf
+      state: present
+      line: 'proxy={{ http_proxy }}'
+      insertafter: EOF
+
+
+  - name: Update resolv.conf with DNS information
+    lineinfile:
+      path: /etc/resolv.conf
+      state: present
+      line: 'nameserver {{ dns }}'
+      insertafter: EOF
+
+
+  - name: Update .bashrc with proxy settings
+    lineinfile:
+      path: ~/.bashrc
+      state: present
+      line: 'export {{ item.name }}={{ item.val }}'
+      insertafter: EOF
+    with_items:
+      - { name: http_proxy, val: '{{ http_proxy }}' }
+      - { name: https_proxy, val: '{{ https_proxy }}' }
+
+
+  - name: Install additional yum package (dos2unix)
+    yum:
+      name: dos2unix
+      state: latest
+
+

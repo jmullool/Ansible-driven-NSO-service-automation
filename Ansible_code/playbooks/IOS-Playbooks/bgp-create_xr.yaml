@@ -1,0 +1,62 @@
+---
+
+- name: Setup BGP configs for XR using iosxr_config module
+  hosts: xr
+  gather_facts: no
+
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+  - name: Configure loopback interface for BGP
+    iosxr_config:
+      lines:
+        - ipv4 address {{ target2.bgp_ip }} 255.255.255.0
+        - description eBGP endpoint for XR Device
+      parents: interface Loopback0
+
+
+  - name: Configure BGP for XR
+    iosxr_config:
+      lines:
+        - router bgp {{ target2.local_as }}
+        - address-family ipv4 unicast
+        - neighbor {{ target1.bgp_ip }} remote-as {{ target1.local_as }}
+        - neighbor {{ target1.bgp_ip }} ebgp-multihop 255
+        - neighbor {{ target1.bgp_ip }} update-source Loopback0
+        - neighbor {{ target1.bgp_ip }} address-family ipv4 unicast
+
+
+
+
+- name: Setup BGP configs for CSR using ios_config module
+  hosts: csr
+  gather_facts: no
+
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+  - name: Configure loopback interface for CSR
+    ios_config:
+      lines:
+        - ip address {{ target1.bgp_ip }} 255.255.255.0
+        - description eBGP endpoint for IOS Device
+      parents: interface Loopback0
+
+
+  - name: Configure BGP for CSR
+    ios_config:
+      lines:
+        - router bgp {{ target1.local_as }}
+        - bgp log-neighbor-changes
+        - neighbor {{ target2.bgp_ip }} remote-as {{ target2.local_as }}
+        - neighbor {{ target2.bgp_ip }} ebgp-multihop 255
+        - neighbor {{ target2.bgp_ip }} update-source Loopback0
+

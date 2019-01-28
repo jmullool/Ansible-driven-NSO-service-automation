@@ -1,0 +1,27 @@
+---
+
+- name: Deploy ISRv + CentOS service chain on ENCS
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+
+  - name: Remove ENCS instances from NSO
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        branch-infra:branch-infra:
+          branch-cpe:
+          - name: '{{ item.serial }}'
+            __state: absent
+    with_items: '{{ encs_to_onboard }}'
+
+

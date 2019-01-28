@@ -1,0 +1,28 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <catalog xmlns="http://cisco.com/ns/branch-infra-common">
+    <name>Gold</name>
+      <deployment>
+        <name>Centos2</name>
+        <bootup-time>400</bootup-time>
+        <recovery-wait-time>120</recovery-wait-time>
+        <vnfd>
+          <name>Centos2</name>
+          <vdu>
+            <name>centos</name>
+          </vdu>
+        </vnfd>
+        <polling-frequency>3</polling-frequency>
+        <port-start-range>22030</port-start-range>
+        <port-end-range>22032</port-end-range>
+        <vnf-port>22</vnf-port>
+        <intangible/>
+        <day0-url xmlns="http://cisco.com/ns/branchinfra-nfvo">
+          <dstFile>bootstrap_config</dstFile>
+          <var>
+            <name>NSO_NET</name>
+            <val>198.18.134.0/24</val>
+          </var>
+        </day0-url>
+      </deployment>
+  </catalog>
+</config>

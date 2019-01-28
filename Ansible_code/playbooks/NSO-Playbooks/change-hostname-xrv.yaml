@@ -1,0 +1,35 @@
+---
+
+- name: Change DNS on XRv
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+#
+#
+#   THIS PLAYBOOK WILL NOT RUN WITHOUT THE "HOST" VARIABLE PASSED AT RUNTIME
+#
+#   usage 'ansible-playbook change-hostname-xrv.yaml -e "host=foo"'
+#
+#
+
+
+  tasks:
+
+  - name: Change hostname on XRv
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        tailf-ncs:devices:
+          device:
+          - name: '{{ target }}'
+            config:
+              tailf-ned-cisco-ios-xr:hostname: '{{ host }}'
+
+

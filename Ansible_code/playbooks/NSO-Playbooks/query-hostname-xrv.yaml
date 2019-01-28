@@ -1,0 +1,24 @@
+---
+
+- name: Query hostname on XRv
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+
+  tasks:
+
+  - name: Query hostname
+    nso_query:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      xpath:  /ncs:devices/device[name='{{ target }}']/config
+      fields:
+      - cisco-ios-xr:hostname
+
+

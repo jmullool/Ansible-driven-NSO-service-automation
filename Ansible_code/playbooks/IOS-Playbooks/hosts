@@ -1,0 +1,34 @@
+all:
+  hosts:
+    csr:
+      ansible_host: 198.18.134.12
+      ansible_connection: network_cli
+      ansible_network_os: ios
+      ansible_user: cisco
+      ansible_ssh_pass: cisco
+      ansible_become: yes
+      ansible_become_method: enable
+      ansible_become_pass: cisco
+
+    isr:
+      ansible_host: 198.18.1.49
+      ansible_port: 22022
+      ansible_connection: network_cli
+      ansible_network_os: ios
+      ansible_user: admin
+      ansible_ssh_pass: admin
+      ansible_become: yes
+      ansible_become_method: enable
+      ansible_become_pass: admin
+    
+    xr:
+      ansible_host: 198.18.134.63
+      ansible_port: 22
+      ansible_connection: network_cli
+      ansible_network_os: iosxr
+      ansible_user: cisco
+      ansible_ssh_pass: cisco
+      ansible_become: yes
+      ansible_become_method: enable
+      ansible_become_pass: cisco
+

@@ -1,0 +1,25 @@
+---
+
+- name: Change domain name on XRv
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+
+  tasks:
+
+  - name: Change domain on XRv
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+
+      # Insert JSON_2_YAML output below - be aware of white space and use spaces, we have included the first line "data:"
+
+      data:
+      
+      

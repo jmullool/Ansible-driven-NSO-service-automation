@@ -1,0 +1,39 @@
+---
+
+- name: eBGP session set-up NSO service 
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+#
+#
+#   THIS PLAYBOOK WILL NOT RUN WITHOUT THE "SESSION_NAME" VARIABLE PASSED AT RUNTIME
+#
+#   usage 'ansible-playbook ebgp-nso.yaml -e "session_name=foo"'
+#
+#
+
+
+  tasks:
+
+  - name: Run NSO eBGP service
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        ebgp:ebgp:
+        - name: '{{ session_name }}' 
+          device:
+          - name: '{{ target1.name }}'
+            address: '{{ target1.address }}'
+            as-number: '{{ target1.local_as }}'
+          - name: '{{ target2.name }}'
+            address: '{{ target2.address }}'
+            as-number: '{{ target2.local_as }}'
+
+

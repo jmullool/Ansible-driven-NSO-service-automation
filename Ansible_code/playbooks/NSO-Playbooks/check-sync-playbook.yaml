@@ -1,0 +1,32 @@
+---
+
+- name: Check-sync, then sync-from if necessary
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+  - name: Do check-sync
+    nso_action:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      path: /ncs:devices/device/{'{{ target }}'}/check-sync
+      input: {}
+    register: status
+
+
+  - name: Do sync-from if out of sync
+    nso_action:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      path: /ncs:devices/device/{'{{ target }}'}/sync-from
+      input: {}
+    when: status.output.result != "in-sync"
+

@@ -1,0 +1,71 @@
+---
+
+- name: Deploy ISRv on multiple ENCS devices
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+  - name: Onboard ENCS to NSO
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        branch-infra:branch-infra:
+          branch-cpe:
+          - name: '{{ item.serial }}'
+            provider: ProviderA
+            type: ENCS
+            password: '{{ item.password }}'
+            serial:  '{{ item.serial }}'
+    with_items: '{{ encs_to_onboard }}'
+
+
+  - name: Onboard ENCS config to NSO
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        branch-infra:branch-infra:
+          branch-cpe:
+          - name: '{{ item.serial }}'
+            provider: ProviderA
+            type: ENCS
+            password: '{{ item.password }}'
+            serial: '{{ item.serial }}'
+            network:
+            - name: client-net
+              bridge: client-bridge
+            vnfd:
+            - name: vBranch-ISR-1.0
+              vdu:
+              - name: ISR
+            vnf:
+            - name: isr
+              deployment: ISR
+              vnfd: vBranch-ISR-1.0
+              vdu: ISR
+              network:
+              - name: client-net
+                nicid: '3'
+                pre-allocated:
+                  address: 192.168.200.1
+                  netmask: 255.255.255.0
+              - name: lan-net
+                nicid: '2'
+              - name: wan-net
+                nicid: '1'
+                pre-allocated:
+                  address: '{{ item.isrv_ip }}'
+                  netmask: 255.255.255.0
+                  gateway: '{{ item.isrv_gateway }}'
+    with_items: '{{ encs_to_onboard }}'
+
+

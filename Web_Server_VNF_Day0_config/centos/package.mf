@@ -1,0 +1,23 @@
+<!-- sha1sum - for calculating checksum -->
+<PackageContents>
+  <File_Info> 
+    <name>centos7_t2_cloud.img</name>
+    <type>root_image</type> 
+    <sha1_checksum>2fb7f15adf0e386a7d46d7d41ce21f3f0d14d645</sha1_checksum> 
+  </File_Info> 
+  <File_Info> 
+    <name>user-data</name>
+    <type>bootstrap_file_1</type> 
+    <sha1_checksum>48a9dc4a4f47df1f8dc7a221e5d54b09f98b61da</sha1_checksum> 
+  </File_Info> 
+  <File_Info> 
+    <name>meta-data</name>
+    <type>bootstrap_file_2</type> 
+    <sha1_checksum>1ba37629163a01de76b1812b1abbd432faf3ef03</sha1_checksum> 
+  </File_Info> 
+  <File_Info> 
+    <name>image_properties.xml</name>
+    <type>image_properties</type> 
+    <sha1_checksum>ac31dd32a7b8d122395e7cd551430e1a32023ba7</sha1_checksum> 
+  </File_Info> 
+</PackageContents> 

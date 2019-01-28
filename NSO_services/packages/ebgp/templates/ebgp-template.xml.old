@@ -1,0 +1,55 @@
+<config-template xmlns="http://tail-f.com/ns/config/1.0"
+                 servicepoint="ebgp">
+  <devices xmlns="http://tail-f.com/ns/ncs">
+      <device>
+      <name>{/device/name}</name>
+      <config>
+        <interface xmlns="urn:ios">
+          <Loopback>
+            <name>0</name>
+            <ip>
+              <address>
+                <primary>
+                  <address>{address}</address>
+                  <mask>255.255.255.255</mask>
+                </primary>
+              </address>
+            </ip>
+          </Loopback>
+        </interface>
+        <router xmlns="urn:ios">
+          <bgp>
+            <as-no>{as-number}</as-no>
+            <neighbor>
+              <id>{/device[name!=current()/name]/address}</id>
+              <remote-as>{as-number}</remote-as>
+            </neighbor>
+          </bgp>
+        </router>
+        <interface xmlns="http://tail-f.com/ned/cisco-ios-xr">
+          <Loopback>
+            <id>0</id>
+            <ipv4>
+              <address>
+                <ip>{address}</ip>
+                <mask>255.255.255.255</mask>
+              </address>
+            </ipv4>
+          </Loopback>
+        </interface>
+        <router xmlns="http://tail-f.com/ned/cisco-ios-xr">
+          <bgp>
+            <bgp-instance>
+              <id>{as-number}</id>
+              <instance>{as-number}</instance>
+              <neighbor>
+                <id>{/device[name!=current()/name]/address}</id>
+                <remote-as>{as-number}</remote-as>
+              </neighbor>
+            </bgp-instance>
+          </bgp>
+        </router>
+      </config>
+    </device>
+  </devices>
+</config-template>

@@ -1,0 +1,3 @@
+target1: { bgp_ip: "22.2.2.2", local_as: "64001" }
+target2: { bgp_ip: "23.1.1.1", local_as: "64002" }
+our_domain: foo.com

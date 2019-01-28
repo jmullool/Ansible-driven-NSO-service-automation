@@ -1,0 +1,28 @@
+---
+
+- name: Change domain name on CSR
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+
+  tasks:
+
+
+  - name: Change domain on CSR
+    nso_config:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      data:
+        tailf-ncs:devices:
+          device:
+          - name: csr1 
+            config:
+              tailf-ned-cisco-ios:ip:
+                domain:
+                  name: '{{ our_domain }}' 

@@ -1,0 +1,22 @@
+---
+
+url: http://198.18.134.4:8080/jsonrpc
+username: admin
+password: admin
+http_proxy: http://proxy.esl.cisco.com:80
+https_proxy: https://proxy.esl.cisco.com:8080
+dns: 198.18.133.1
+domain: dcloud-cisco.com
+our_domain: test2.com
+target: vXR1
+deployment: { serial: "ESX42337B70", password: "Cisco123#", isrv_ip: "198.18.1.61", isrv_gateway: "198.18.1.1" }
+
+
+encs_to_onboard:
+  - { serial: "ESX42337B70", password: "Cisco123#", isrv_ip: "198.18.1.60", isrv_gateway: "198.18.1.1" }
+  - { serial: "ESX4233ACBA", password: "Cisco123#", isrv_ip: "198.18.1.61", isrv_gateway: "198.18.1.1" }
+
+target1: { name: "csr1", address: "22.2.2.2", local_as: "100" }
+target2: { name: "vXR1", address: "23.1.1.1", local_as: "200" }
+target3: { name: "NFVIS1_NFVIS1-isr", address: "24.1.1.1", local_as: "200" }
+

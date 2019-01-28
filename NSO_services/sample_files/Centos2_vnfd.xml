@@ -1,0 +1,83 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <nfvo xmlns="http://tail-f.com/pkg/tailf-etsi-rel2-nfvo">
+  <vnfd>
+    <id>Centos2</id>
+    <product-info-description>Centos_Linux</product-info-description>
+    <vdu>
+      <id>centos</id>
+      <internal-connection-point-descriptor>
+        <id>mgmt</id>
+        <external-connection-point-descriptor>mgmt</external-connection-point-descriptor>
+        <layer-protocol>IPv4</layer-protocol>
+        <interface-id xmlns="http://tail-f.com/pkg/tailf-etsi-rel2-nfvo-nfvis">0</interface-id>
+      </internal-connection-point-descriptor>
+      <virtual-compute-descriptor>centos-virtual-compute</virtual-compute-descriptor>
+      <virtual-storage-descriptor>centos-virtual-storage</virtual-storage-descriptor>
+      <software-image-descriptor>
+        <name>centos</name>
+        <version></version>
+        <checksum></checksum>
+        <container-format>bare</container-format>
+        <disk-format>qcow2</disk-format>
+        <image>http://198.18.134.28/SEVT_labs/centos-untared-img/centos7_t2_cloud.img.tar.gz</image>
+        <image-name xmlns="http://tail-f.com/pkg/tailf-etsi-rel2-nfvo-nfvis">centos</image-name>
+      </software-image-descriptor>
+      <day0 xmlns="http://tail-f.com/pkg/tailf-etsi-rel2-nfvo-nfvis">
+        <destination>--user-data</destination>
+      </day0>
+      <day0 xmlns="http://tail-f.com/pkg/tailf-etsi-rel2-nfvo-nfvis">
+        <destination>bootstrap_config</destination>
+      </day0>
+    </vdu>
+    <virtual-compute-descriptor>
+      <id>centos-virtual-compute</id>
+      <virtual-memory>
+        <virtual-memory-size>4.0</virtual-memory-size>
+      </virtual-memory>
+      <virtual-cpu>
+        <number-of-virtual-cpus>1</number-of-virtual-cpus>
+      </virtual-cpu>
+    </virtual-compute-descriptor>
+    <virtual-storage-descriptor>
+      <id>centos-virtual-storage</id>
+      <type-of-storage>root</type-of-storage>
+      <size-of-storage>8</size-of-storage>
+    </virtual-storage-descriptor>
+    <virtual-link-descriptor>
+      <id>mgmt</id>
+      <connectivity-type>
+        <layer-protocol>IPv4</layer-protocol>
+      </connectivity-type>
+    </virtual-link-descriptor>
+    <external-connection-point-descriptor>
+      <id>mgmt</id>
+      <virtual-link-descriptor>mgmt</virtual-link-descriptor>
+      <layer-protocol>IPv4</layer-protocol>
+      <management xmlns="http://tail-f.com/pkg/tailf-etsi-rel2-nfvo-nfvis"/>
+    </external-connection-point-descriptor>
+    <deployment-flavor>
+      <id>Centos2</id>
+      <vdu-profile>
+        <vdu>centos</vdu>
+        <min-number-of-instances>1</min-number-of-instances>
+        <max-number-of-instances>1</max-number-of-instances>
+      </vdu-profile>
+      <instantiation-level>
+        <id>Centos</id>
+        <vdu-level>
+          <vdu>centos</vdu>
+          <number-of-instances>1</number-of-instances>
+        </vdu-level>
+      </instantiation-level>
+      <instantiation-level>
+        <id>Centos2</id>
+        <vdu-level>
+          <vdu>centos</vdu>
+          <number-of-instances>1</number-of-instances>
+        </vdu-level>
+      </instantiation-level>
+      <default-instantiation-level>Centos2</default-instantiation-level>
+    </deployment-flavor>
+  </vnfd>
+  </nfvo>
+</config>

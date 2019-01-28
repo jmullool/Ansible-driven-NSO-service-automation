@@ -1,0 +1,123 @@
+!
+!# vBranch ISR1000v Day-0 configuration v0.5
+!
+!# Variables required by this configuration: (must be provided to NFVIS
+!# in deployment REST-API call like this:
+!#
+!# [...]
+!#    <config_data>
+!#      <configuration>
+!#        <dst>iosxe_config.txt</dst>
+!#        <file>http://203.0.113.1/day0/isr1000v-day0.txt</file>
+!#        <variable>
+!#          <name>SP_HOSTNAME</name>
+!#          <val>testrouter</val>
+!#        </variable>
+!# [...]
+!#
+!
+!####_DAY0_BASE
+
+!
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service tcp-keepalives-in
+service tcp-keepalives-out
+service password-encryption
+!
+do license smart register idtoken ${SP_LICENSE_TOKEN}
+platform hardware throughput level MB ${SP_LICENSE_BANDWIDTH}
+!
+hostname ${USER_HOSTNAME}-day0
+!
+crypto key generate rsa modulus 2048 general-keys label ${USER_HOSTNAME}
+!
+no ip http server
+no ip http secure-server
+!
+!
+!####_DAY0_LOCAL_USER
+!
+aaa new-model
+!
+!!! Reserve a separate set of AAA lists for NSO, on a dedicated port (${NSO_LOGIN_PORT})
+!!! (TO-DO/Q: Do we want to parameterize this port number?)
+!
+aaa authentication login NSO line
+aaa authorization exec NSO if-authenticated
+aaa authorization commands 15 NSO none
+aaa accounting exec NSO none
+aaa accounting commands 15 NSO none
+!
+ip ssh port ${VNF_PORT} rotary 1
+!
+ip access-list extended NSO-SSH
+ ! TO-DO/Q: Do we want to restrict this here to NSO source addresses?
+ ! Or on management hub?
+ permit tcp any any eq ${VNF_PORT}
+ deny   ip any any
+!
+line vty 90 95
+ access-class NSO-SSH in vrf-also
+ authorization exec NSO
+ accounting commands 15 NSO
+ accounting exec NSO
+ login authentication NSO
+ rotary 1
+ transport input ssh
+ password ${VROUTER_PASSWORD}
+ privilege level 15
+ no domain-lookup
+!
+!! Other VTYs and AAA lists -- may be modified by SP
+!
+line vty 0 89
+ transport input none
+!
+!####_DAY0_SSH
+!
+ip ssh version 2
+!
+!####DAY0_MANAGEMENT_PLANE_PROTECTION
+!
+control-plane host
+ management-interface GigabitEthernet1 allow ssh
+!
+!####Mullooly customizations!
+!
+ip dhcp pool client-pool
+ network 192.168.200.0 255.255.255.0
+ domain-name foo.com
+ dns-server 198.18.133.1 
+ default-router 192.168.200.1
+!
+interface GigabitEthernet 2
+ description wan interface
+ ip address $USER_NIC_ID1_PRE_ALLOCATED_ADDRESS $USER_NIC_ID1_MASK
+ ip nat outside
+ no shutdown
+!
+interface GigabitEthernet 3
+ description lan interface
+ ip address $USER_NIC_ID2_PRE_ALLOCATED_ADDRESS $USER_NIC_ID2_MASK
+ no shutdown
+!
+interface GigabitEthernet 4
+ description client-net interface
+ ip address $USER_NIC_ID3_PRE_ALLOCATED_ADDRESS $USER_NIC_ID3_MASK
+ ip nat inside
+ no shutdown
+!
+router ospf 100
+ redistribute connected subnets
+ network 198.18.1.0 0.0.0.255 area 0
+!
+ip access-list standard nat
+ permit 192.168.200.0 0.0.0.255
+!
+ip nat inside source list nat interface GigabitEthernet2 overload
+!
+ip route 0.0.0.0 0.0.0.0 $USER_NIC_ID1_GW
+!
+end
+

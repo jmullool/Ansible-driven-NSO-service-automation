@@ -1,0 +1,14 @@
+- name: Change domain name on XR9K using iosxr_config module
+  hosts: xr
+  gather_facts: no
+
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+  - name: Change domain name
+    iosxr_config:
+      lines: domain name {{ our_domain }}

@@ -1,0 +1,59 @@
+module ebgp {
+
+  namespace "http://example.com/ebgp";
+  prefix ebgp;
+
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import tailf-ncs {
+    prefix ncs;
+  }
+
+  description
+    "Bla bla...";
+
+  revision 2016-01-01 {
+    description
+      "Initial revision.";
+  }
+
+  list ebgp {
+    description "This is an RFS skeleton service";
+
+    key name;
+    leaf name {
+      tailf:info "Unique service id";
+      tailf:cli-allow-range;
+      type string;
+    }
+
+    uses ncs:service-data;
+    ncs:servicepoint ebgp;
+    
+    list device {
+      key name;
+      min-elements 2;
+      max-elements 2;
+      leaf name {
+        type leafref {
+          path "/ncs:devices/ncs:device/ncs:name";
+        }
+      }
+
+      leaf address {
+        mandatory true;
+        type inet:ip-address;
+      }
+
+      leaf as-number {
+        mandatory true;
+        type uint16;
+      }
+    }
+  }
+}
+

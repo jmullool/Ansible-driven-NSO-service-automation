@@ -1,0 +1,18 @@
+<!-- sha1sum - for calculating checksum -->
+<PackageContents>
+  <File_Info> 
+    <name>isrv-universalk9.16.03.02.qcow2</name>
+    <type>root_image</type> 
+    <sha1_checksum>6e377c378980caf68843f6b96a972d7b3501a4e5</sha1_checksum> 
+  </File_Info> 
+  <File_Info> 
+    <name>image_properties.xml</name>
+    <type>image_properties</type> 
+    <sha1_checksum>2b0af6780b533ad9ba2d77be9b2c506bc80910ef</sha1_checksum> 
+  </File_Info> 
+  <File_Info> 
+    <name>ovf-env.xml</name>
+    <type>bootstrap_file_1</type> 
+    <sha1_checksum>aad802de6ef10dc4b4b4c13d7d5d9991e4d89a8c</sha1_checksum> 
+  </File_Info> 
+</PackageContents> 

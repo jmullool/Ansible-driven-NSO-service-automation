@@ -1,0 +1,29 @@
+#!/bin/bash
+passwd root << EOF
+cisco123
+cisco123
+
+
+
+
+
+Y
+EOF
+echo "Cloud-init running user-data off config drive (/dev/sr0)" >> /var/log/cloud-init.log 
+echo "Setting up interfaces and addresses" >> /var/log/cloud-init.log
+ifconfig eth0 down 
+ifconfig eth1 down 
+echo "setting ifconfig addresses" >> /var/log/cloud-init.log
+echo "setting eth0 address" >> /var/log/cloud-init.log
+ifconfig eth0 ${NICID_0_IP_ADDRESS} netmask ${NICID_0_NETMASK} up
+route add -net ${NSO_NET} gw 10.20.0.1 
+ifconfig eth1 up
+echo "modify sshd_config file" >> /var/log/cloud-init.log
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sed -i '36i PasswordAuthentication yes' /etc/ssh/sshd_config
+echo "restarting sshd" >> /var/log/cloud-init.log
+sudo service sshd restart
+echo "ssh restarted" >> /var/log/cloud-init.log
+sleep 20
+echo -e 'TYPE=Ethernet\nBOOTPROTO=static\nDEFROUTE=no\nIPV4_FAILURE_FATAL=yes\nIPV6INIT=no\nIPV6_FAILURE_FATAL=no\nNAME=eth0\nDEVICE=eth0\nONBOOT=yes\nPEERDNS=yes\nPEERROUTES=yes\nNM_CONTROLLED=no\nIPADDR=${NICID_0_IP_ADDRESS}\nNETMASK=${NICID_0_NETMASK}' > /etc/sysconfig/network-scripts/ifcfg-eth0
+echo -e 'TYPE=Ethernet\nBOOTPROTO=dhcp\nDEFROUTE=yes\nIPV4_FAILURE_FATAL=yes\nIPV6INIT=no\nIPV6_FAILURE_FATAL=no\nNAME=eth1\nDEVICE=eth1\nONBOOT=yes\nPEERDNS=yes\nPEERROUTES=yes\nNM_CONTROLLED=no' > /etc/sysconfig/network-scripts/ifcfg-eth1

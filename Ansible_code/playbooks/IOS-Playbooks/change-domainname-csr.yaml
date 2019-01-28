@@ -1,0 +1,14 @@
+- name: Change domain name on CSR using ios_config module
+  hosts: csr 
+  gather_facts: no
+
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+  - name: Change domain name
+    ios_config:
+      lines: ip domain name {{ our_domain }}

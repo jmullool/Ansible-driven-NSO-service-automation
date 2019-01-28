@@ -1,0 +1,50 @@
+---
+
+- name: Setup BGP configs for CSR using ios_config module
+  hosts: csr
+  gather_facts: no
+
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+
+  - name: Configure loopback interface for CSR
+    ios_config:
+      lines:
+        - no interface Loopback0
+
+
+  - name: Configure BGP for CSR
+    ios_config:
+      lines:
+        - no router bgp {{ target1.local_as }}
+
+
+
+
+- name: Remove BGP configs for XR using iosxr_config module
+  hosts: xr
+  gather_facts: no
+
+
+  vars_files:
+    - vars.yaml
+
+
+  tasks:
+
+
+  - name: un-Configure loopback interface for XR 
+    iosxr_config:
+      lines:
+        - no interface Loopback0
+
+
+  - name: un-Configure BGP for XR
+    iosxr_config:
+      lines:
+        - no router bgp {{ target2.local_as }}
