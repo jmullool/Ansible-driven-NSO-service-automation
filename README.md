@@ -16,6 +16,7 @@ Customers Design Goals:  Customer is looking to re-architect their global campus
 
 NSO provides certain values not included in Ansible. Incuding the use of YANG for service modeling, a "network wide" commit for services that span multiple devices, auto-generation of update and delete functions, a "source of truth" network DB to only push config chnages when needed and algorithms that provide idempotent operation behavior. In order to provide a "better together" solution, the NSO team has developed "NSO modules" for Ansible such that the customer IT departments can still use their Ansible playbook approach to drive both application and network services, but via very tight integration between Ansible and NSO. 
 
+![alt text](https://github.com/jmullool/Ansible-driven-NSO-service-automation/pic1.tiff)
 
 For our customer, NSO is being investigated as the development platform for all network automation, standardizing on the API’s offered from the NSO platform, rather than per-device.  Moving the plan forward, the combination of using Ansible on top of NSO is the north-star plan to automate, simplify, and reduce errors in operations for any CRUD operations throughout the network, and mainly on service offering deployments, specifically targeting L2 and L3 VPN as mentioned earlier.
 
