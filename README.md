@@ -65,6 +65,7 @@ The code for this project included:
 The below referenced documentation in the docs folder reviews all usage guidelines. As an example, the user will execute an ansible playbook from the command line which will then pull in any required variables from the vars.yaml and hosts files. Here is a sample execution of the query-hostname-xrv.yaml playbook in single verbose (-v) mode. The playbook uses the nso_query module to pull hostname data from NSO via the XPATH to the target host. The "target" is a variable which is referenced in the vars.yaml file and set the the XRV1 host.
 
 [root@ansible NSO-Playbooks]# ansible-playbook query-hostname-xrv.yaml -v
+
 Using /root/playbooks/NSO-Playbooks/ansible.cfg as config file
 
 PLAY [Query hostname on XRv] ************************************************************************************************************************************************************
@@ -78,7 +79,7 @@ localhost                  : ok=1    changed=0    unreachable=0    failed=0
 
 ## Installation
 
-The easiest approach is to utilize the pre-canned Cisco dCloud environemnt. This will be generally available mid-February 2019 but can be requested beforethen by sending an email to jmullool@cisco.com. 
+The easiest approach is to utilize the pre-canned Cisco dCloud environment which has all components including the IOS, IOS-XR and ENCS devices. This will be generally available in the dcloud catalog (going through QA now) in mid-February 2019 but can be requested before then by sending an email to jmullool@cisco.com. 
 
 Otherwise for manual install, you would need to:
 
