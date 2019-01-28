@@ -1,6 +1,6 @@
 # Ansible-driven-NSO-service-automation
 
-Sample Ansible playbooks driving NSO services, including basic IOS configuration changes and full vBranch CPE automation. Cisco dcloud lab environment will also be avaialble.
+This repo contains sample Ansible playbooks and NSO services showing integration and use-cases between Ansible and Cisco's NSO product for driving end-to-end network services. Ansible playbooks for both with NSO and without NSO are provided such that the user can make a technical comparisons of a better together solution. These playbooks are provided to learn how to use the new Ansible NSO modules in order to configure IOS and IOS-XR devices and to expose the rich NSO service development capabilities for automating complex solutions such as deploying a vBranch CPE with VNFs using the NSO vBranch Funciton Pack. A NSO eBGP service is used an an example. All of these NSO use cases are initiated by Ansible playbooks. A Cisco dcloud lab environment is also be avaialble along with extensive docuemntation. 
 
 
 ## Business/Technical Challenge
@@ -16,7 +16,7 @@ Customers Design Goals:  Customer is looking to re-architect their global campus
 
 NSO provides certain values not included in Ansible. Incuding the use of YANG for service modeling, a "network wide" commit for services that span multiple devices, auto-generation of update and delete functions, a "source of truth" network DB to only push config chnages when needed and algorithms that provide idempotent operation behavior. In order to provide a "better together" solution, the NSO team has developed "NSO modules" for Ansible such that the customer IT departments can still use their Ansible playbook approach to drive both application and network services, but via very tight integration between Ansible and NSO. 
 
-![](page1.png)
+![](doc/page1.png)
 
 For our customer, NSO is being investigated as the development platform for all network automation, standardizing on the API’s offered from the NSO platform, rather than per-device.  Moving the plan forward, the combination of using Ansible on top of NSO is the north-star plan to automate, simplify, and reduce errors in operations for any CRUD operations throughout the network, and mainly on service offering deployments, specifically targeting L2 and L3 VPN as mentioned earlier.
 
@@ -40,28 +40,85 @@ Our solution will levegerage the following Cisco technologies
 
 ## Solution Components
 
+Ansible is a well known open source tool for server and application autoamtion. Cisco has contributed NSO modules to Ansible such that Ansible playbooks can now be developed to drive NSO device and service configuration. The API used to communicate to NSO is a JSON RPC. Any device or service in NSO can now be accessed via Ansible. In our labs we run through several examples:
 
-<!-- This does not need to be completed during the initial submission phase  
+..* Using the query, action and show Ansible NSO Modules
+..* Using the Ansible config Module
+..* Comparing Native IOS Ansible modules with NSO Ansible Modules
+..* Ansible + NSO deploying multiple NFVIS/vBranch sites
+..* Ansible + NSO deploying NFVIS/vBaranch with Linux VNF
 
-Provide a brief overview of the components involved with this project. e.g Python /  -->
+The code for this project included:
+
+..* Anible playbook creation
+..* NSO eBGP XPATH service creation
+..* Creating deployment XML files for NSO
+..* Building proper Day0 bootstrap files for both ISRv and Centos VNFs
+
+![](doc/page2.png)
+
+![](doc/page3.png)
 
 
 ## Usage
 
-<!-- This does not need to be completed during the initial submission phase  
+The below referenced documentation in the docs folder reviews all usage guidelines. As an example, the user will execute an ansible playbook from the command line which will then pull in any required variables from the vars.yaml and hosts files. Here is a sample execution of the query-hostname-xrv.yaml playbook in single verbose (-v) mode. The playbook uses the nso_query module to pull hostname data from NSO via the XPATH to the target host. The "target" is a variable which is referenced in the vars.yaml file and set the the XRV1 host.
 
-Provide a brief overview of how to use the solution  -->
+[root@ansible NSO-Playbooks]# ansible-playbook query-hostname-xrv.yaml -v
+Using /root/playbooks/NSO-Playbooks/ansible.cfg as config file
+ [WARNING]: Unable to parse /root/playbooks/NSO-Playbooks/inventory/inventory as an inventory source
+ [WARNING]: No inventory was parsed, only implicit localhost is available
+ [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
 
+PLAY [Query hostname on XRv] ************************************************************************************************************************************************************
+
+TASK [Query hostname] *******************************************************************************************************************************************************************
+ok: [localhost] => {"changed": false, "output": [["xrv9k"]]}
+
+PLAY RECAP ******************************************************************************************************************************************************************************
+localhost                  : ok=1    changed=0    unreachable=0    failed=0 
+
+
+[root@studentnso NSO-Playbooks]# cat query-hostname-xrv.yaml
+---
+
+- name: Query hostname on XRv
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - vars.yaml
+
+
+
+  tasks:
+
+  - name: Query hostname
+    nso_query:
+      url: '{{ url }}'
+      username: '{{ username }}'
+      password: '{{ password }}'
+      xpath:  /ncs:devices/device[name='{{ target }}']/config
+      fields:
+      - cisco-ios-xr:hostname
 
 
 ## Installation
 
-How to install or setup the project for use.
+The easiest approach is to utilize the pre-canned Cisco dCloud environemnt. This will be generally available mid-February 2019 but can be requested beforethen by sending an email to jmullool@cisco.com. 
 
+Otherwise for manual install, you would need to:
+
+..* Install Ansible- https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
+..* Install Cisco NSO- https://developer.cisco.com/docs/nso/#!getting-nso/getting-nso
+..* Install the Cisco NSO vBranch Function Pack if interested in vBranch use cases
+..* Have IOS, IOS-XR, ENCS devices available to configure
 
 ## Documentation
 
-Pointer to reference documentation for this project.
+Complete lab guide material can be found here:
+[vBranch_and_Ansible_Lab_v01_26_19.docx](https://github.com/jmullool/Ansible-driven-NSO-service-automation/blob/master/doc/vBranch_and_Ansible_Lab_v01_26_19.docx)
 
 
 ## License
